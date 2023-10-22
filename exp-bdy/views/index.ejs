@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <!-- Add CSS link to style your page -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Add Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+
+<body style="width: 90%;display: flex;justify-content: center">
+    <div class="container" style="max-width: 500px">
+        <h1>Weather App</h1>
+        <form action="/weather" method="POST">
+            <input type="text" name="city" placeholder="Enter a city name" required>
+            <button type="submit">Get Weather</button>
+        </form>
+        <% if (weatherData) { console.log(weatherData) %>
+            <div class="weather-info">
+                <h2>Weather in <%= weatherData.city %>, <%= weatherData.countryCode %>
+                </h2>
+                <p>Temperature: <%= weatherData.temperature %>°C</p>
+                <p>Description: <%= weatherData.description %>
+                </p>
+                <img src="http://openweathermap.org/img/wn/<%= weatherData.icon %>.png" alt="Weather Icon">
+                <p>Coordinates: Latitude <%= weatherData.coordinates.latitude %>, Longitude <%=
+                            weatherData.coordinates.longitude %>
+                </p>
+                <p>Feels Like: <%= weatherData.feelsLikeTemp %>°C</p>
+                <p>Humidity: <%= weatherData.humidity %>%</p>
+                <p>Pressure: <%= weatherData.pressure %> hPa</p>
+                <p>Wind Speed: <%= weatherData.windSpeed %> m/s</p>
+                <p>Rain in Last 3 Hours: <%= weatherData.rainVolumeLast3Hours %> mm</p>
+            </div>
+            <!-- Add a div to hold the map -->
+            <div id="map" style="width: 400px; height: 400px"></div>
+            <% } %>
+                <% if (error) { %>
+                    <div class="error">
+                        <p>
+                            <%= error %>
+                        </p>
+                    </div>
+                    <% } %>
+    </div>
+
+    <!-- Add Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // JavaScript code for displaying the map
+        <% if (weatherData) { %>
+        const map = L.map('map').setView([<%= weatherData.coordinates.latitude %>, <%= weatherData.coordinates.longitude %>], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+            }).addTo(map);
+
+            L.marker([<%= weatherData.coordinates.latitude %>, <%= weatherData.coordinates.longitude %>]).addTo(map)
+                .bindPopup('Weather Location')
+                .openPopup();
+        <% } %>
+    </script>
+</body>
+
+</html>
